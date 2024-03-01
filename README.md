@@ -1,3 +1,4 @@
 # ML_module_1
 
-Made by Sitdikov Yuriy
+fullname & group
+Sitdikov Yuriy 972203
