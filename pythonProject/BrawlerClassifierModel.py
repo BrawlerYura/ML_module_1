@@ -231,17 +231,19 @@ class BrawlerClassifierModel:
         # best_params = study.best_params
         # print("Best params:", best_params)
 
+        model_cb = CatBoostClassifier(learning_rate=0.07981609439133353, depth=5, iterations=392)
+
         accs = []
         for ((X_train, y_train), (X_val, y_val)) in self.kfold(X, y, 13):
-            self.model.fit(X_train, y_train)
-            pred = self.model.predict(X_val)
+            model_cb.fit(X_train, y_train)
+            pred = model_cb.predict(X_val)
             accs.append(np.mean(pred == y_val))
         acc_mean = np.mean(accs)
 
         print(acc_mean)
 
         with open('../data/model/model.pkl', 'wb') as model_pkl:
-            pickle.dump(self.model, model_pkl)
+            pickle.dump(model_cb, model_pkl)
 
         return "Training completed successfully"
 
