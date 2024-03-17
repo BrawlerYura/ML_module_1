@@ -3,10 +3,13 @@ LABEL authors="sitdi"
 
 WORKDIR /app
 
-ADD . /app
+COPY poetry.lock pyproject.toml Flask_model.py BrawlerYuraClassifierModel.py .
 
-COPY wheelhouse /wheelhouse
+RUN pip install poetry
 
-RUN pip install --no-index --find-links=/wheelhouse *.whl
+RUN POETRY_VIRTUALENVS_CREATE=false poetry install --no-interaction --no-ansi
+
+#COPY wheelhouse /wheelhouse
+#RUN pip install --no-index --find-links=/wheelhouse *.whl
 
 CMD ["python","Flask_model.py"]
