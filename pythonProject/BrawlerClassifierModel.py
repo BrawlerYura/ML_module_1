@@ -1,7 +1,8 @@
+import pickle
+
 from catboost import CatBoostClassifier
 import pandas as pd
 import numpy as np
-import pickle
 
 class BrawlerClassifierModel:
     def kfold(self, X, y, k=5):
