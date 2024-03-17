@@ -3,6 +3,11 @@ import pickle
 from catboost import CatBoostClassifier
 import pandas as pd
 import numpy as np
+import logging
+
+
+logging.basicConfig(filename='../data/log_file.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 class BrawlerClassifierModel:
     def kfold(self, X, y, k=5):
@@ -185,15 +190,21 @@ class BrawlerClassifierModel:
 
         df.drop('Group', axis=1, inplace=True)
 
+        missing_values = df.isnull().sum()
+        total_missing = missing_values.sum()
+
+        logging.info('Успешно изменен датасет, кол-во пропусков: ' + str(total_missing))
         return df
 
     def __init__(self):
+        logging.info('Успешно загружена модель')
         with open('../data/model/model.pkl', 'rb') as model_pkl:
             self.model = pickle.load(model_pkl)
 
 
     def train(self, dataset):
         df_train = pd.read_csv(dataset)
+        logging.info('Успешно загружен датасет по пути ' + str(dataset))
 
         df_train_prepared = self.prepare_df(df_train)
 
@@ -242,16 +253,17 @@ class BrawlerClassifierModel:
         acc_mean = np.mean(accs)
 
         print(acc_mean)
-
+        logging.info('Успешно обучена модель с точностью: ' + str(acc_mean))
         with open('../data/model/model.pkl', 'wb') as model_pkl:
             pickle.dump(model_cb, model_pkl)
-
+        logging.info('Успешно сохранена модель')
         return "Training completed successfully"
 
 
 
     def predict(self, dataset):
         df_test = pd.read_csv(dataset)
+        logging.info('Успешно загружен датасет по пути ' + str(dataset))
         ids = df_test['PassengerId']
 
         df_test_prepared = self.prepare_df(df_test)
@@ -260,7 +272,7 @@ class BrawlerClassifierModel:
         predict = np.where(predict == 1, True, False)
 
         predictions_df = pd.DataFrame({'PassengerId': ids, 'Transported': predict})
-
+        logging.info('Успешный предикт')
         predictions_df.to_csv('../data/results.csv', index=False)
-
+        logging.info('Результат загружен по пути ../data/results.csv')
         return "Predictiong completed successfully"
